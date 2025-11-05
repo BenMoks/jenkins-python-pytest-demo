@@ -9,14 +9,11 @@ pipeline {
             }
         }
 
-        stage('Run tests') {
+        stage('Run tests and publish report') {
             steps {
-                sh './venv/bin/pytest --junitxml=report.xml'
-            }
-        }
-
-        stage('Publish Report') {
-            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh './venv/bin/pytest --junitxml=report.xml'
+                }
                 junit 'report.xml'
             }
         }
